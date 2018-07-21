@@ -101,7 +101,9 @@ void MainWindow::onTransferClicked(){
 }
 
 void MainWindow::updateProgress(float progress){
-
+    progress = (progress > 1.0) ? 1.0 : progress;
+    progress = (progress < 0.0) ? 0.0 : progress;
+    this->progressFile->setValue(100 * progress);
 }
 
 void MainWindow::transferCompleted(){
@@ -111,3 +113,5 @@ void MainWindow::transferCompleted(){
 void MainWindow::transferFailed(){
 
 }
+
+#include "moc_mainwindow.cpp"
