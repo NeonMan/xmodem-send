@@ -11,10 +11,12 @@ FIND_PACKAGE(Qt5 COMPONENTS Core SerialPort Widgets REQUIRED)
 SET(CFILES
 	main.cpp
 	mainwindow.cpp
+	crc16-xmodem.c
 )
 
 SET(HFILES
 	mainwindow.h
+	crc16-xmodem.h
 )
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${CFILES} ${HFILES})

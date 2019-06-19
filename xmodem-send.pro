@@ -24,8 +24,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
+        crc16-xmodem.c \
         main.cpp \
         mainwindow.cpp
 
 HEADERS += \
+        crc16-xmodem.h \
         mainwindow.h
