@@ -153,12 +153,12 @@ void Transfer::run(){
                 //Checksum
                 if(use_crc){
                     uint16_t packet_crc = crc_init();
-                    crc_update(packet_crc, payload.data(), payload.size());
+                    packet_crc = crc_update(packet_crc, payload.data(), payload.size());
                     packet_crc = crc_finalize(packet_crc);
 
-                    //Add CRC, little endian
-                    packet.append(packet_crc & 0xFF);
+                    //Add CRC, big endian.
                     packet.append((packet_crc >> 8) & 0xFF);
+                    packet.append(packet_crc & 0xFF);
                 }
                 else{
                     packet.append(xmodem_sum(packet));
