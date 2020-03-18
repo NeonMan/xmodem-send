@@ -172,7 +172,12 @@ void MainWindow::onTransferClicked(){
 }
 
 void MainWindow::updateProgress(float progress){
-    qDebug() << __FILE__ << __LINE__ << "--" << __func__;
+    {
+        char progress_message[128];
+        memset(progress_message, '\0', sizeof(progress_message));
+        sprintf(progress_message, "(%f%%)", progress * 100);
+        qDebug() << __FILE__ << __LINE__ << "--" << __func__ << progress_message;
+    }
     progress = (progress > 1.0) ? 1.0 : progress;
     progress = (progress < 0.0) ? 0.0 : progress;
     this->progressFile->setValue(100.0 * progress);

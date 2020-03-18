@@ -3,8 +3,9 @@
 
 #include <QObject>
 #include <QSerialPort>
+#include <QThread>
 
-class Transfer : public QObject
+class Transfer : public QThread
 {
     Q_OBJECT
 public:
@@ -14,9 +15,13 @@ public:
             QString filePath,
             QObject *parent = nullptr
             );
-    ~Transfer();
+    virtual ~Transfer();
     void launch();
     void cancel();
+
+protected:
+    //QThread method
+    void run () override;
 
 private:
     QSerialPort *serialPort;

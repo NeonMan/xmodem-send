@@ -2,7 +2,7 @@
 #include <QSerialPortInfo>
 #include <QDebug>
 
-Transfer::Transfer(QString serialPortName, qint32 baudrate, QString filePath, QObject *parent)  : QObject(parent)
+Transfer::Transfer(QString serialPortName, qint32 baudrate, QString filePath, QObject *parent)  : QThread(parent)
 {
     qDebug() << __FILE__ << __LINE__ << "--" << __func__;
     this->filePath = filePath;
@@ -31,10 +31,23 @@ Transfer::~Transfer(){
 
 void Transfer::launch(){
     qDebug() << __FILE__ << __LINE__ << "--" << __func__;
-    //Reset progress
-    emit updateProgress(0.0f);
+
+    //Launch worker thread
+    this->run();
 }
 
 void Transfer::cancel(){
     qDebug() << __FILE__ << __LINE__ << "--" << __func__;
+}
+
+
+//The bulk of the work goes here
+void Transfer::run(){
+    qDebug() << __FILE__ << __LINE__ << "--" << __func__;
+
+    //Reset progress
+    emit updateProgress(0.0f);
+
+    //Transfer completed
+    emit updateProgress(1.0f);
 }
