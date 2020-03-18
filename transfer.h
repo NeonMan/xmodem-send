@@ -23,14 +23,18 @@ protected:
     //QThread method
     void run () override;
 
+    static const quint32 timeoutRead      =  5000;
+    static const quint32 timeoutFirstRead = 60000;
+
 private:
     QSerialPort *serialPort;
     QString filePath;
+    bool cancelRequested;
 
 signals:
     void updateProgress(float);
     void transferCompleted();
-    void transferFailed();
+    void transferFailed(QString);
 };
 
 #endif // TRANSFER_H

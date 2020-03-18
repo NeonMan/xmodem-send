@@ -44,7 +44,7 @@ private slots:
 
     void updateProgress(float progress); //Values [0.0 1.0]
     void onTransferCompleted();
-    void onTransferFailed();
+    void onTransferFailed(QString reason);
 };
 
 #endif // MAINWINDOW_H

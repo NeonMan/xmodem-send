@@ -7,6 +7,7 @@
 #include <QProgressBar>
 #include <QStatusBar>
 #include <QSettings>
+#include <QMessageBox>
 
 #include <QDebug>
 
@@ -53,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
 
                 QPushButton * pushCancel = new QPushButton(tr("Cancel"), widgetButtons);
                 this->pushCancel = pushCancel;
+                this->pushCancel->setEnabled(false);
                 QPushButton * pushTransfer = new QPushButton(tr("Transfer"), widgetButtons);
                 this->pushTransfer = pushTransfer;
 
@@ -71,9 +73,10 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     //Status bar
+    if(false) //<-- Disabled, for now.
     {
         QStatusBar *statusBar = new QStatusBar(this);
-        statusBar->showMessage("Ready");
+        statusBar->showMessage(tr("Ready"));
         this->statusBar = statusBar;
         this->setStatusBar(statusBar);
     }
@@ -131,6 +134,9 @@ void MainWindow::set_enabled_widgets(bool enable){
     this->editFilePath->setEnabled(enable);
     this->comboBaudrate->setEnabled(enable);
     this->comboSerialPort->setEnabled(enable);
+
+    //Cancel button goes against the rest of the bunch
+    this->pushCancel->setEnabled(!enable);
 }
 
 void MainWindow::onBrowseClicked(){
@@ -164,7 +170,7 @@ void MainWindow::onTransferClicked(){
     //Connect to signals
     connect(this->transferInstance, SIGNAL(updateProgress(float)), this, SLOT(updateProgress(float)));
     connect(this->transferInstance, SIGNAL(transferCompleted(void)), this, SLOT(onTransferCompleted(void)));
-    connect(this->transferInstance, SIGNAL(transferFailed(void)), this, SLOT(onTransferFailed(void)));
+    connect(this->transferInstance, SIGNAL(transferFailed(QString)), this, SLOT(onTransferFailed(QString)));
 
     //Disable UI elements
     set_enabled_widgets(false);
@@ -185,12 +191,15 @@ void MainWindow::updateProgress(float progress){
 
 void MainWindow::onTransferCompleted(){
     qDebug() << __FILE__ << __LINE__ << "--" << __func__;
+    QMessageBox::information(this, tr("Transfer completed"), tr("Transfer completed"));
     set_enabled_widgets(true);
 }
 
-void MainWindow::onTransferFailed(){
-    qDebug() << __FILE__ << __LINE__ << "--" << __func__;
+void MainWindow::onTransferFailed(QString reason){
+    qDebug() << __FILE__ << __LINE__ << "--" << __func__ << "(" << reason << ")";
+    QMessageBox::critical(this, tr("Transfer failed"), reason);
     set_enabled_widgets(true);
+
 }
 
 //Save relevant widget values into QSettings
