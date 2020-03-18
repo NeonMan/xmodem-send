@@ -47,8 +47,6 @@
 extern "C" {
 #endif
 
-
-/**
 /**
  * Calculate the initial crc value.
  */

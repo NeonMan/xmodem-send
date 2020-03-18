@@ -1,11 +1,21 @@
 #include "mainwindow.h"
+#include "app-info.h"
+
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QFileDialog>
+#include <QProgressBar>
+#include <QStatusBar>
+#include <QSettings>
+
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    //Set default attributes
+    this->transferInstance = nullptr;
+
     //Build the UI widgets.
     {
         QWidget * widgetCentral = new QWidget(this);
@@ -60,7 +70,20 @@ MainWindow::MainWindow(QWidget *parent)
         }
     }
 
-    populate_widgets();
+    //Status bar
+    {
+        QStatusBar *statusBar = new QStatusBar(this);
+        statusBar->showMessage("Ready");
+        this->statusBar = statusBar;
+        this->setStatusBar(statusBar);
+    }
+    this->populate_widgets();
+
+    //Connect QStettings-relevant widgets to onStoreSettings
+    {
+        connect(this->comboSerialPort, SIGNAL(currentIndexChanged(int)), this, SLOT(onStoreSettings(void)));
+        connect(this->comboBaudrate, SIGNAL(currentIndexChanged(int)), this, SLOT(onStoreSettings(void)));
+    }
 }
 
 MainWindow::~MainWindow()
@@ -69,23 +92,49 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::populate_widgets(){
+    //Get previous values from QSettings
+    QString lastPort;
+    qint32  lastRate;
+    {
+        QSettings settings;
+        lastRate = settings.value(KEY_LAST_BAUDRATE, 9600).toInt();
+        lastPort = settings.value(KEY_LAST_PORT, "").toString();
+    }
+
     //Populate com ports
     for(QSerialPortInfo i : QSerialPortInfo::availablePorts()){
-        comboSerialPort->addItem(i.portName(), QVariant(i.portName()));
+        comboSerialPort->addItem(i.portName() + "  --  " + i.manufacturer(), QVariant(i.portName()));
+        //Select last session's port, if available
+        if(i.portName() == lastPort){
+            comboSerialPort->setCurrentIndex(comboSerialPort->count() - 1);
+        }
     }
 
     //Populate baudrates
     for(qint32 rate : QSerialPortInfo::standardBaudRates()){
         comboBaudrate->addItem(QString::number(rate), QVariant(rate));
-        if(rate == 9600){
+        //Select last session's rate
+        if(rate == lastRate){
             comboBaudrate->setCurrentIndex(comboBaudrate->count() - 1);
         }
     }
     //Make progress bar full
-    progressFile->setValue(0);
+    progressFile->setValue(100);
+
+    //Call onStoreSettings() to save the current status
+    onStoreSettings();
+}
+
+void MainWindow::set_enabled_widgets(bool enable){
+    this->pushBrowse->setEnabled(enable);
+    this->pushTransfer->setEnabled(enable);
+    this->editFilePath->setEnabled(enable);
+    this->comboBaudrate->setEnabled(enable);
+    this->comboSerialPort->setEnabled(enable);
 }
 
 void MainWindow::onBrowseClicked(){
+    qDebug() << __FILE__ << __LINE__ << "--" << __func__;
     QString path = QFileDialog::getOpenFileName(this, tr("Select file"));
     if(path.length() > 0){
         editFilePath->setText(path);
@@ -93,25 +142,58 @@ void MainWindow::onBrowseClicked(){
 }
 
 void MainWindow::onCancelClicked(){
-
+    qDebug() << __FILE__ << __LINE__ << "--" << __func__;
+    this->transferInstance->cancel();
+    set_enabled_widgets(true);
 }
 
 void MainWindow::onTransferClicked(){
+    qDebug() << __FILE__ << __LINE__ << "--" << __func__;
+    //If instance already exists, delete it
+    if(this->transferInstance){
+        delete this->transferInstance;
+    }
 
+    //Create a Transfer instance
+    this->transferInstance = new Transfer(
+                this->comboSerialPort->currentData().toString(),
+                this->comboBaudrate->currentData().toInt(),
+                this->editFilePath->text(),
+                this);
+
+    //Connect to signals
+    connect(this->transferInstance, SIGNAL(updateProgress(float)), this, SLOT(updateProgress(float)));
+    connect(this->transferInstance, SIGNAL(transferCompleted(void)), this, SLOT(onTransferCompleted(void)));
+    connect(this->transferInstance, SIGNAL(transferFailed(void)), this, SLOT(onTransferFailed(void)));
+
+    //Disable UI elements
+    set_enabled_widgets(false);
+    this->transferInstance->launch();
 }
 
 void MainWindow::updateProgress(float progress){
+    qDebug() << __FILE__ << __LINE__ << "--" << __func__;
     progress = (progress > 1.0) ? 1.0 : progress;
     progress = (progress < 0.0) ? 0.0 : progress;
-    this->progressFile->setValue(100 * progress);
+    this->progressFile->setValue(100.0 * progress);
 }
 
-void MainWindow::transferCompleted(){
-
+void MainWindow::onTransferCompleted(){
+    qDebug() << __FILE__ << __LINE__ << "--" << __func__;
+    set_enabled_widgets(true);
 }
 
-void MainWindow::transferFailed(){
+void MainWindow::onTransferFailed(){
+    qDebug() << __FILE__ << __LINE__ << "--" << __func__;
+    set_enabled_widgets(true);
+}
 
+//Save relevant widget values into QSettings
+void MainWindow::onStoreSettings(){
+    qDebug() << __FILE__ << __LINE__ << "--" << __func__;
+    QSettings settings;
+    settings.setValue(KEY_LAST_BAUDRATE, this->comboBaudrate->currentData().toInt());
+    settings.setValue(KEY_LAST_PORT, this->comboSerialPort->currentData().toString());
 }
 
 #include "moc_mainwindow.cpp"

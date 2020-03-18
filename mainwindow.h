@@ -9,6 +9,8 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 
+#include "transfer.h"
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -18,6 +20,7 @@ public:
     ~MainWindow();
 
 private:
+    //Widgets
     QComboBox * comboSerialPort;
     QComboBox * comboBaudrate;
     QLineEdit * editFilePath;
@@ -25,17 +28,23 @@ private:
     QProgressBar * progressFile;
     QPushButton * pushCancel;
     QPushButton * pushTransfer;
+    QStatusBar * statusBar;
+
+    //Other attributes
+    Transfer * transferInstance;
 
     void populate_widgets();
+    void set_enabled_widgets(bool enable = true);
 
 private slots:
+    void onStoreSettings();
     void onBrowseClicked();
     void onCancelClicked();
     void onTransferClicked();
 
     void updateProgress(float progress); //Values [0.0 1.0]
-    void transferCompleted();
-    void transferFailed();
+    void onTransferCompleted();
+    void onTransferFailed();
 };
 
 #endif // MAINWINDOW_H
