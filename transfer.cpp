@@ -1,3 +1,9 @@
+/* Copyright (C) 2020 J.Luis <root@heavydeck.net>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * version 2 as published by the Free Software Foundation.
+ */
 #include "transfer.h"
 #include "crc16-xmodem.h"
 #include <QSerialPortInfo>
@@ -20,7 +26,12 @@ static char xmodem_sum(const QByteArray &ba){
     return rv;
 }
 
-Transfer::Transfer(QString serialPortName, qint32 baudrate, QString filePath, QObject *parent)  : QThread(parent)
+Transfer::Transfer(
+        QString serialPortName,
+        qint32 baudrate,
+        QString filePath,
+        QObject *parent
+        )  : QThread(parent)
 {
     qDebug() << __FILE__ << __LINE__ << "--" << __func__;
     this->cancelRequested = false;
@@ -143,8 +154,9 @@ void Transfer::run(){
                 QByteArray payload = in_file->read(128);
                 if (payload.length() < 128){
                     int padding = 128 - payload.length();
+                    char pad_byte = padding & 0xFF;
                     while(padding){
-                        payload.append((char)0x00);
+                        payload.append((char)pad_byte);
                         padding--;
                     }
                 }

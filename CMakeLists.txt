@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.7)
 PROJECT(xmodem-send)
 
 # --- Qt5 related stuff ---
@@ -12,11 +12,13 @@ SET(CFILES
 	main.cpp
 	mainwindow.cpp
 	crc16-xmodem.c
+	transfer.cpp
 )
 
 SET(HFILES
 	mainwindow.h
 	crc16-xmodem.h
+	transfer.cpp
 )
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${CFILES} ${HFILES})

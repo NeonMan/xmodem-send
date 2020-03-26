@@ -1,3 +1,9 @@
+/* Copyright (C) 2020 J.Luis <root@heavydeck.net>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * version 2 as published by the Free Software Foundation.
+ */
 #ifndef APPINFO_H
 #define APPINFO_H
 
@@ -26,7 +32,12 @@
 #endif
 
 //QSettings keys
-#define KEY_LAST_BAUDRATE "LastBaudrate"
-#define KEY_LAST_PORT     "LastSerialPort"
+#define KEY_LAST_BAUDRATE     "Baudrate"
+#define KEY_LAST_PORT         "Port"
+#define KEY_LAST_DIRECTORY    "LastDirectory"
+#define KEY_LAST_PARITY       "Parity"
+#define KEY_LAST_STOP_BITS    "StopBits"
+#define KEY_LAST_FLOW_CONTROL "FlowControl"
+#define KEY_USE_PKCS_PADDING  "UsePaddingPKCS7"
 
 #endif // APPINFO_H
