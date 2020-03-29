@@ -178,6 +178,10 @@ MainWindow::MainWindow(QWidget *parent)
         connect(this->comboFlowControl, SIGNAL(currentIndexChanged(int)), this, SLOT(onStoreSettings(void)));
         connect(this->checkUsePkcsPadding, SIGNAL(stateChanged(int)), this, SLOT(onStoreSettings(void)));
     }
+    //Rest of slot connections
+    {
+        connect(this->comboLanguage, SIGNAL(currentIndexChanged(int)), this, SLOT(onLanguageChanged(void)));
+    }
 }
 
 MainWindow::~MainWindow()
@@ -369,6 +373,11 @@ void MainWindow::onTransferFailed(QString reason){
     QMessageBox::critical(this, tr("Transfer failed"), reason);
     set_enabled_widgets(true);
 
+}
+
+void MainWindow::onLanguageChanged(){
+    qDebug() << __FILE__ << __LINE__ << "--" << __func__;
+    QMessageBox::information(this, tr("Restart required"), tr("Application restart required for language change to be effective."));
 }
 
 //Save relevant widget values into QSettings

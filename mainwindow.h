@@ -53,6 +53,7 @@ private:
 
 private slots:
     void onStoreSettings();
+    void onLanguageChanged();
     void onBrowseClicked();
     void onCancelClicked();
     void onTransferClicked();

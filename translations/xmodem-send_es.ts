@@ -80,96 +80,106 @@
         <translation>Listo</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="235"/>
+        <location filename="../mainwindow.cpp" line="239"/>
         <source>(English)</source>
         <translation>(Inglés)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="238"/>
+        <location filename="../mainwindow.cpp" line="242"/>
         <source>(Spanish)</source>
         <translation>(Español)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="244"/>
-        <location filename="../mainwindow.cpp" line="268"/>
+        <location filename="../mainwindow.cpp" line="248"/>
+        <location filename="../mainwindow.cpp" line="272"/>
         <source>None</source>
         <translation>Ninguno</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="246"/>
+        <location filename="../mainwindow.cpp" line="250"/>
         <source>Odd</source>
         <translation>Impar</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="248"/>
+        <location filename="../mainwindow.cpp" line="252"/>
         <source>Even</source>
         <translation>Par</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="250"/>
+        <location filename="../mainwindow.cpp" line="254"/>
         <source>Mark</source>
         <translation>Marca</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="252"/>
+        <location filename="../mainwindow.cpp" line="256"/>
         <source>Space</source>
         <translation>Espacio</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="270"/>
+        <location filename="../mainwindow.cpp" line="274"/>
         <source>Hardware</source>
         <translation>Hardware</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="303"/>
+        <location filename="../mainwindow.cpp" line="307"/>
         <source>Select file</source>
         <translation>Seleccione archivo</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="356"/>
+        <location filename="../mainwindow.cpp" line="367"/>
         <source>Transfer completed</source>
         <translation>Transferencia completa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="362"/>
+        <location filename="../mainwindow.cpp" line="373"/>
         <source>Transfer failed</source>
         <translation>Transferencia fallida</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="380"/>
+        <source>Restart required</source>
+        <translation>Se requiere reinicio</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="380"/>
+        <source>Application restart required for language change to be effective.</source>
+        <translation>Se requiere reiniciar la aplicación para que el cambio de idioma tenga efecto.</translation>
     </message>
 </context>
 <context>
     <name>Transfer</name>
     <message>
-        <location filename="../transfer.cpp" line="71"/>
+        <location filename="../transfer.cpp" line="88"/>
         <source>Transfer cancelled</source>
         <translation>Transferencia cancelada</translation>
     </message>
     <message>
-        <location filename="../transfer.cpp" line="85"/>
+        <location filename="../transfer.cpp" line="102"/>
         <source>Unable to open port: </source>
         <translation>No se ha podido abrir el puerto: </translation>
     </message>
     <message>
-        <location filename="../transfer.cpp" line="94"/>
+        <location filename="../transfer.cpp" line="111"/>
         <source>Unable to open file: </source>
         <translation>No se ha podido abrir el archivo: </translation>
     </message>
     <message>
-        <location filename="../transfer.cpp" line="99"/>
+        <location filename="../transfer.cpp" line="116"/>
         <source>Unable to open QFile: </source>
         <translation>No se ha podido instanciar QFile para: </translation>
     </message>
     <message>
-        <location filename="../transfer.cpp" line="130"/>
+        <location filename="../transfer.cpp" line="149"/>
         <source>Incorrect start of XMODEM transmission (0x</source>
         <translation>Inicio incorrecto de transferencia XMODEM (0x</translation>
     </message>
     <message>
-        <location filename="../transfer.cpp" line="137"/>
+        <location filename="../transfer.cpp" line="156"/>
         <source>Timeout</source>
         <translation>Tiempo de espera agotado</translation>
     </message>
     <message>
-        <location filename="../transfer.cpp" line="200"/>
+        <location filename="../transfer.cpp" line="265"/>
         <source>Status timeout</source>
         <translation>Agotado tiempo de espera de estado</translation>
     </message>
