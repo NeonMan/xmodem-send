@@ -55,6 +55,22 @@ Transfer::Transfer(
     }
 }
 
+void Transfer::setParity(QSerialPort::Parity parirty){
+    this->serialPort->setParity(parirty);
+}
+
+void Transfer::setStopBits(QSerialPort::StopBits stopBits){
+    this->serialPort->setStopBits(stopBits);
+}
+
+void Transfer::SetFlowControl(QSerialPort::FlowControl flowControl){
+    this->serialPort->setFlowControl(flowControl);
+}
+
+void Transfer::setPkcsPadding(bool enabled){
+    //Unimplemented
+}
+
 Transfer::~Transfer(){
     qDebug() << __FILE__ << __LINE__ << "--" << __func__;
 }

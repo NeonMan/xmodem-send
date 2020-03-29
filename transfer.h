@@ -21,6 +21,12 @@ public:
             QString filePath,
             QObject *parent = nullptr
             );
+
+    void setParity(QSerialPort::Parity parirty);
+    void setStopBits(QSerialPort::StopBits stopBits);
+    void SetFlowControl(QSerialPort::FlowControl flowControl);
+    void setPkcsPadding(bool enabled);
+
     virtual ~Transfer();
     void launch();
     void cancel();

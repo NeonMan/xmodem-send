@@ -328,6 +328,11 @@ void MainWindow::onTransferClicked(){
                 this->comboBaudrate->currentData().toInt(),
                 this->editFilePath->text(),
                 this);
+    //Configure it
+    this->transferInstance->setParity((QSerialPort::Parity)this->comboParity->currentData().toInt());
+    this->transferInstance->setStopBits((QSerialPort::StopBits)this->comboStopBits->currentData().toInt());
+    this->transferInstance->SetFlowControl((QSerialPort::FlowControl)this->comboFlowControl->currentData().toInt());
+    this->transferInstance->setPkcsPadding(this->checkUsePkcsPadding->isChecked());
 
     //Connect to signals
     connect(this->transferInstance, SIGNAL(updateProgress(float)), this, SLOT(updateProgress(float)));
@@ -336,6 +341,8 @@ void MainWindow::onTransferClicked(){
 
     //Disable UI elements
     set_enabled_widgets(false);
+
+    //Launch
     this->transferInstance->launch();
 }
 
