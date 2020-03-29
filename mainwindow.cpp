@@ -20,6 +20,7 @@
 #include <QSerialPortInfo>
 #include <QFileInfo>
 #include <QDir>
+#include <QLocale>
 
 #include <QApplication>
 #include <QDebug>
@@ -98,6 +99,9 @@ MainWindow::MainWindow(QWidget *parent)
             QFormLayout* layoutSettings = new QFormLayout(widgetSettings);
             this->widgetSettings = widgetSettings;
 
+            QComboBox * comboLanguage = new QComboBox(widgetSettings);
+            this->comboLanguage = comboLanguage;
+
             QComboBox * comboParity = new QComboBox(widgetSettings);
             this->comboParity = comboParity;
 
@@ -110,11 +114,11 @@ MainWindow::MainWindow(QWidget *parent)
             QCheckBox * checkUsePkcsPadding = new QCheckBox(widgetSettings);
             this->checkUsePkcsPadding = checkUsePkcsPadding;
 
+            layoutSettings->addRow(tr("Language"), comboLanguage);
             layoutSettings->addRow(tr("Parity"), comboParity);
             layoutSettings->addRow(tr("Stop bits"), comboStopBits);
             layoutSettings->addRow(tr("Flow control"), comboFlowControl);
             layoutSettings->addRow(tr("PKCS#7 padding"), checkUsePkcsPadding);
-            widgetSettings->setEnabled(false);
 
             tabWidgetMain->addTab(widgetSettings, tr("Settings"));
         }
@@ -137,16 +141,16 @@ MainWindow::MainWindow(QWidget *parent)
             //Qt
             QLabel* labelAboutQt = new QLabel(widgetAbout);
             labelAboutQt->setWordWrap(true);
-            labelAboutQt->setText(tr(
-                        "The Qt framework is released under the GNU Lesser General Public License version 3.")
+            labelAboutQt->setText(
+                        "The Qt framework is released under the GNU Lesser General Public License version 3."
                         );
             layoutAbout->addWidget(labelAboutQt);
 
             //Icon
             QLabel* labelAboutIcon = new QLabel(widgetAbout);
             labelAboutIcon->setWordWrap(true);
-            labelAboutIcon->setText(tr(
-                        "Icon by 'Those Icons' at flaticon.com.")
+            labelAboutIcon->setText(
+                        "Icon by 'Those Icons' at flaticon.com."
                         );
             layoutAbout->addWidget(labelAboutIcon);
 
@@ -168,6 +172,7 @@ MainWindow::MainWindow(QWidget *parent)
     {
         connect(this->comboSerialPort, SIGNAL(currentIndexChanged(int)), this, SLOT(onStoreSettings(void)));
         connect(this->comboBaudrate, SIGNAL(currentIndexChanged(int)), this, SLOT(onStoreSettings(void)));
+        connect(this->comboLanguage, SIGNAL(currentIndexChanged(int)), this, SLOT(onStoreSettings(void)));
         connect(this->comboParity, SIGNAL(currentIndexChanged(int)), this, SLOT(onStoreSettings(void)));
         connect(this->comboStopBits, SIGNAL(currentIndexChanged(int)), this, SLOT(onStoreSettings(void)));
         connect(this->comboFlowControl, SIGNAL(currentIndexChanged(int)), this, SLOT(onStoreSettings(void)));
@@ -183,6 +188,7 @@ MainWindow::~MainWindow()
 void MainWindow::populate_widgets(){
     //Get previous values from QSettings
     QString lastPort;
+    QString lastLanguage;
     qint32  lastRate;
     int lastParity;
     int lastStopBits;
@@ -196,6 +202,7 @@ void MainWindow::populate_widgets(){
         lastStopBits = settings.value(KEY_LAST_STOP_BITS, (int)QSerialPort::StopBits::OneStop).toInt();
         lastFlow     = settings.value(KEY_LAST_FLOW_CONTROL, (int)QSerialPort::FlowControl::NoFlowControl).toInt();
         usePkcs      = settings.value(KEY_USE_PKCS_PADDING, false).toBool();
+        lastLanguage = settings.value(KEY_LANGUAGE, QLocale::system().name()).toString();
     }
 
     //Populate com ports
@@ -217,6 +224,20 @@ void MainWindow::populate_widgets(){
     }
     //Make progress bar full
     progressFile->setValue(progressFile->maximum());
+
+    //Language combo
+    {
+        //Note: Entries are in the format:
+        //  * Language name on the language itself
+        //  * Language name on the current tr() language, between parentheses
+
+        //                           Language name  + translated name, Locale name
+        this->comboLanguage->addItem("English "     + tr("(English)"), QVariant(""));
+        if(lastLanguage == "") this->comboLanguage->setCurrentIndex(this->comboLanguage->count()-1);
+
+        this->comboLanguage->addItem("Español "     + tr("(Spanish)"), QVariant("es_ES"));
+        if(lastLanguage == "es_ES") this->comboLanguage->setCurrentIndex(this->comboLanguage->count()-1);
+    }
 
     //Parity combo
     {
@@ -267,7 +288,7 @@ void MainWindow::set_enabled_widgets(bool enable){
     this->comboSerialPort->setEnabled(enable);
 
     //The whole config is enabled/disabled
-    //widgetSettings->setEnabled(enable);
+    widgetSettings->setEnabled(enable);
 
     //Cancel button goes against the rest of the bunch
     this->pushCancel->setEnabled(!enable);
@@ -353,6 +374,7 @@ void MainWindow::onStoreSettings(){
     settings.setValue(KEY_LAST_STOP_BITS, this->comboStopBits->currentData().toInt());
     settings.setValue(KEY_LAST_FLOW_CONTROL, this->comboFlowControl->currentData().toInt());
     settings.setValue(KEY_USE_PKCS_PADDING, this->checkUsePkcsPadding->isChecked());
+    settings.setValue(KEY_LANGUAGE, this->comboLanguage->currentData().toString());
 }
 
 #include "moc_mainwindow.cpp"

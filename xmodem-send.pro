@@ -37,4 +37,5 @@ HEADERS += \
 
 RESOURCES +=
 
+TRANSLATIONS = translations/xmodem-send_es.ts
 RC_ICONS = icon/vga.ico

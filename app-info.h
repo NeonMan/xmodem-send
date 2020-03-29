@@ -39,5 +39,6 @@
 #define KEY_LAST_STOP_BITS    "StopBits"
 #define KEY_LAST_FLOW_CONTROL "FlowControl"
 #define KEY_USE_PKCS_PADDING  "UsePaddingPKCS7"
+#define KEY_LANGUAGE          "Language"
 
 #endif // APPINFO_H

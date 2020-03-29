@@ -39,6 +39,7 @@ private:
 
     //Settings
     QWidget * widgetSettings;
+    QComboBox * comboLanguage;
     QComboBox * comboParity;
     QComboBox * comboStopBits;
     QComboBox * comboFlowControl;

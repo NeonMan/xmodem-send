@@ -6,6 +6,12 @@
  */
 #include "mainwindow.h"
 #include <QApplication>
+#include <QTranslator>
+#include <QLocale>
+#include <QDir>
+#include <QSettings>
+#include <QDebug>
+
 #include "app-info.h"
 
 int main(int argc, char *argv[])
@@ -29,6 +35,23 @@ int main(int argc, char *argv[])
                 QString::number(VERSION_MINOR) + "." +
                 QString::number(VERSION_BUILD)
                 );
+
+    //Translation
+    QTranslator myappTranslator;
+    {
+        QSettings settings;
+        QString locale = settings.value(KEY_LANGUAGE, QLocale::system().name()).toString();
+        if(locale != ""){
+            bool rv = myappTranslator.load("xmodem-send_" + locale, QDir::currentPath() + "/translations");
+            a.installTranslator(&myappTranslator);
+            if (rv){
+                qDebug() << "Added locale for:" << locale;
+            }
+            else{
+                qDebug() << "Failed to add locale for:" << locale << "Current path is:" << QDir::currentPath();
+            }
+        }
+    }
 
     MainWindow w;
     w.show();
