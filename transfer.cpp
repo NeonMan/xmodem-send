@@ -37,6 +37,7 @@ Transfer::Transfer(
     this->cancelRequested = false;
     this->filePath = filePath;
     this->serialPort = nullptr;
+    this->usePkcsPadding = false;
     //Find the serial port by name
     for(QSerialPortInfo &port_info : QSerialPortInfo::availablePorts()){
         if(port_info.portName() == serialPortName){
@@ -68,7 +69,7 @@ void Transfer::SetFlowControl(QSerialPort::FlowControl flowControl){
 }
 
 void Transfer::setPkcsPadding(bool enabled){
-    //Unimplemented
+    this->usePkcsPadding = enabled;
 }
 
 Transfer::~Transfer(){
@@ -129,6 +130,8 @@ void Transfer::run(){
 
     //Transfer loop
     bool transferComplete = false;
+    bool sendPkcsPacket = ((in_file->size() % 128) == 0) && this->usePkcsPadding;
+    bool pkcsPacketSent = false;
     do{
         //Wait for the first character from recipient
         char status_char = '\0';
@@ -171,6 +174,13 @@ void Transfer::run(){
                 if (payload.length() < 128){
                     int padding = 128 - payload.length();
                     char pad_byte = padding & 0xFF;
+
+                    //Padding of half-full packets will be performed using the PKCS#7
+                    //method of filling the pachet with the value fo the gap size.
+                    //If the file to be transfered is an even split of 128 bytes *and*
+                    //PKCS#7 flag is enabled (this->usePkcsPadding) an aditional 128 byte packet
+                    //of the number 128 repeated all over it *must* be sent as to guarantee
+                    //padding is always present.
                     while(padding){
                         payload.append((char)pad_byte);
                         padding--;
@@ -192,6 +202,35 @@ void Transfer::run(){
                     packet.append(xmodem_sum(packet));
                 }
             }
+            else if (sendPkcsPacket){
+                //Packet header
+                packet.append(XMODEM_SOH);
+                packet.append(current_packet & 0xFF);
+                packet.append(255U - (current_packet & 0xFF));
+                //Payload
+                const uint8_t pad_byte = 128U;
+                uint16_t cksum = 0; //Same for CRC and checksum
+                for(int i = 0; i<128; i++){
+                    packet.append(pad_byte);
+                    if(use_crc){
+                        cksum = crc_update(cksum, &pad_byte, 1);
+                    }
+                    else{
+                        cksum += pad_byte;
+                    }
+                }
+                //Checksum
+                if(use_crc){
+                    packet.append((cksum >> 8) & 0xFF);
+                    packet.append(cksum & 0xFF);
+                }
+                else{
+                    packet.append(cksum & 0xFF);
+                }
+
+                //Signal we sent the packet
+                pkcsPacketSent = true;
+            }
             else{
                 //Transfer complete!
                 packet.append(XMODEM_EOT);
@@ -207,9 +246,19 @@ void Transfer::run(){
                 this->serialPort->read(&status_char, 1);
                 if(status_char == XMODEM_ACK){
                     current_packet++;
+
+                    //If we just sent the PKCS packet, set the sendPkcsPacket
+                    //flag to false so next "packet" is the end of transfer.
+                    if(pkcsPacketSent){
+                        sendPkcsPacket = false;
+                    }
                 }
                 else{
-                    in_file->seek((current_packet - 1) * 128);
+                    //Seek only needed within file packets. PKCS padding needs
+                    //no call to seek()
+                    if(!pkcsPacketSent){
+                        in_file->seek((current_packet - 1) * 128);
+                    }
                 }
             }
             else{

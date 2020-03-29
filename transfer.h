@@ -41,6 +41,7 @@ protected:
 private:
     QSerialPort *serialPort;
     QString filePath;
+    bool usePkcsPadding;
     bool cancelRequested;
 
 signals:
