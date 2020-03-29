@@ -128,9 +128,9 @@ MainWindow::MainWindow(QWidget *parent)
             //Disclaimer
             QLabel* labelAboutText = new QLabel(widgetAbout);
             labelAboutText->setWordWrap(true);
-            labelAboutText->setText(QApplication::applicationName() + " (C) 2020 heavydeck.net; " + tr(
+            labelAboutText->setText(QApplication::applicationName() + " (C) 2020 heavydeck.net; " +
                         "This program is free software; you can redistribute it and/or "
-                        "modify it under the terms of the GNU General Public License version 2.")
+                        "modify it under the terms of the GNU General Public License version 2."
                         );
             layoutAbout->addWidget(labelAboutText);
 
@@ -138,9 +138,17 @@ MainWindow::MainWindow(QWidget *parent)
             QLabel* labelAboutQt = new QLabel(widgetAbout);
             labelAboutQt->setWordWrap(true);
             labelAboutQt->setText(tr(
-                        "The Qt framework is released under the GNU Lesser General Public License version 3. Visit http://qt.io for further information.")
+                        "The Qt framework is released under the GNU Lesser General Public License version 3.")
                         );
             layoutAbout->addWidget(labelAboutQt);
+
+            //Icon
+            QLabel* labelAboutIcon = new QLabel(widgetAbout);
+            labelAboutIcon->setWordWrap(true);
+            labelAboutIcon->setText(tr(
+                        "Icon by 'Those Icons' at flaticon.com.")
+                        );
+            layoutAbout->addWidget(labelAboutIcon);
 
             tabWidgetMain->addTab(widgetAbout, tr("About"));
         }

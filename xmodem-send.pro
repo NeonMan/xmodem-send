@@ -34,3 +34,7 @@ HEADERS += \
         crc16-xmodem.h \
         mainwindow.h \
         transfer.h
+
+RESOURCES +=
+
+RC_ICONS = icon/vga.ico
