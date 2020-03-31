@@ -11,6 +11,8 @@
 #include <QProgressBar>
 #include <QStatusBar>
 #include <QTabWidget>
+#include <QLineEdit>
+#include <QTextEdit>
 #include <QLabel>
 
 
@@ -21,6 +23,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QLocale>
+#include <QSizePolicy>
 
 #include <QApplication>
 #include <QDebug>
@@ -43,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
     //Build the UI widgets.
     {
         QTabWidget * tabWidgetMain = new QTabWidget(this);
+        this->widgetMain = tabWidgetMain;
         this->setCentralWidget(tabWidgetMain);
 
         //Transfer tab
@@ -133,38 +137,35 @@ MainWindow::MainWindow(QWidget *parent)
 
         //About tab
         {
-            QWidget * widgetAbout = new QWidget(tabWidgetMain);
-            QVBoxLayout * layoutAbout = new QVBoxLayout(widgetAbout);
-            //this->widgetAbout = widgetAbout;
+            QTextEdit * textAbout = new QTextEdit(tabWidgetMain);
+            QWidget * widgetAbout = textAbout;
 
-            //Disclaimer
-            QLabel* labelAboutText = new QLabel(widgetAbout);
-            labelAboutText->setWordWrap(true);
-            labelAboutText->setText(QApplication::applicationName() + " (C) 2020 heavydeck.net; " +
+            widgetAbout->setMinimumHeight(0);
+            textAbout->setReadOnly(true);
+
+            //App copyright
+            textAbout->append(QApplication::applicationName() + " (C) 2020 heavydeck.net; " +
                         "This program is free software; you can redistribute it and/or "
-                        "modify it under the terms of the GNU General Public License version 2."
+                        "modify it under the terms of the GNU General Public License version 2.\n"
                         );
-            layoutAbout->addWidget(labelAboutText);
 
             //Qt
-            QLabel* labelAboutQt = new QLabel(widgetAbout);
-            labelAboutQt->setWordWrap(true);
-            labelAboutQt->setText(
-                        "The Qt framework is released under the GNU Lesser General Public License version 3."
+            textAbout->append(
+                        "The Qt framework is released under the GNU Lesser General Public "
+                        "License version 3. Visit www.qt.io for more information.\n"
                         );
-            layoutAbout->addWidget(labelAboutQt);
 
             //Icon
-            QLabel* labelAboutIcon = new QLabel(widgetAbout);
-            labelAboutIcon->setWordWrap(true);
-            labelAboutIcon->setText(
-                        "Icon by 'Those Icons' at flaticon.com."
+            textAbout->append(
+                        "Icon by 'Those Icons' visit www.flaticon.com for more information.\n"
                         );
-            layoutAbout->addWidget(labelAboutIcon);
 
+            textAbout->moveCursor(QTextCursor::Start);
             tabWidgetMain->addTab(widgetAbout, tr("About"));
         }
     }
+
+    this->resize(this->widgetMain->sizeHint().width(),0);
 
     //Status bar
     {
@@ -221,6 +222,7 @@ void MainWindow::populate_widgets(){
     for(QSerialPortInfo i : QSerialPortInfo::availablePorts()){
         addComboElementAndSetIndex(comboSerialPort, i.portName() + "  --  " + i.manufacturer(), i.portName(), lastPort);
     }
+    comboSerialPort->model()->sort(0);
 
     //Populate baudrates
     for(qint32 rate : QSerialPortInfo::standardBaudRates()){

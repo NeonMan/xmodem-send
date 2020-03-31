@@ -27,6 +27,8 @@ public:
     ~MainWindow();
 
 private:
+    //Main widget
+    QWidget * widgetMain;
     //Transfer
     QComboBox * comboSerialPort;
     QComboBox * comboBaudrate;
