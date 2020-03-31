@@ -25,6 +25,14 @@
 #include <QApplication>
 #include <QDebug>
 
+///This function inserts an element into the combobox and if data matches with indexData, sets current index to that element.
+static void addComboElementAndSetIndex(QComboBox *comboBox, QString label, QVariant data, QVariant indexData = QVariant()){
+    comboBox->addItem(label, data);
+    if(data == indexData){
+        comboBox->setCurrentIndex(comboBox->count() - 1);
+    }
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -211,20 +219,12 @@ void MainWindow::populate_widgets(){
 
     //Populate com ports
     for(QSerialPortInfo i : QSerialPortInfo::availablePorts()){
-        comboSerialPort->addItem(i.portName() + "  --  " + i.manufacturer(), QVariant(i.portName()));
-        //Select last session's port, if available
-        if(i.portName() == lastPort){
-            comboSerialPort->setCurrentIndex(comboSerialPort->count() - 1);
-        }
+        addComboElementAndSetIndex(comboSerialPort, i.portName() + "  --  " + i.manufacturer(), i.portName(), lastPort);
     }
 
     //Populate baudrates
     for(qint32 rate : QSerialPortInfo::standardBaudRates()){
-        comboBaudrate->addItem(QString::number(rate), QVariant(rate));
-        //Select last session's rate
-        if(rate == lastRate){
-            comboBaudrate->setCurrentIndex(comboBaudrate->count() - 1);
-        }
+        addComboElementAndSetIndex(comboBaudrate, QString::number(rate), rate, lastRate);
     }
     //Make progress bar full
     progressFile->setValue(progressFile->maximum());
@@ -235,44 +235,31 @@ void MainWindow::populate_widgets(){
         //  * Language name on the language itself
         //  * Language name on the current tr() language, between parentheses
 
-        //                           Language name  + translated name, Locale name
-        this->comboLanguage->addItem("English "     + tr("(English)"), QVariant(""));
-        if(lastLanguage == "") this->comboLanguage->setCurrentIndex(this->comboLanguage->count()-1);
-
-        this->comboLanguage->addItem("Español "     + tr("(Spanish)"), QVariant("es_ES"));
-        if(lastLanguage == "es_ES") this->comboLanguage->setCurrentIndex(this->comboLanguage->count()-1);
+        //                                              Language name  + translated name, Locale name
+        addComboElementAndSetIndex(this->comboLanguage, "English "     + tr("(English)"), "",      lastLanguage);
+        addComboElementAndSetIndex(this->comboLanguage, "Español "     + tr("(Spanish)"), "es_ES", lastLanguage);
     }
 
     //Parity combo
     {
-        this->comboParity->addItem(tr("None"), (int)QSerialPort::Parity::NoParity);
-        if(lastParity == (int)QSerialPort::Parity::NoParity) this->comboParity->setCurrentIndex(this->comboParity->count()-1);
-        this->comboParity->addItem(tr("Odd"), (int)QSerialPort::Parity::OddParity);
-        if(lastParity == (int)QSerialPort::Parity::OddParity) this->comboParity->setCurrentIndex(this->comboParity->count()-1);
-        this->comboParity->addItem(tr("Even"), (int)QSerialPort::Parity::EvenParity);
-        if(lastParity == (int)QSerialPort::Parity::EvenParity) this->comboParity->setCurrentIndex(this->comboParity->count()-1);
-        this->comboParity->addItem(tr("Mark"), (int)QSerialPort::Parity::MarkParity);
-        if(lastParity == (int)QSerialPort::Parity::MarkParity) this->comboParity->setCurrentIndex(this->comboParity->count()-1);
-        this->comboParity->addItem(tr("Space"), (int)QSerialPort::Parity::SpaceParity);
-        if(lastParity == (int)QSerialPort::Parity::SpaceParity) this->comboParity->setCurrentIndex(this->comboParity->count()-1);
+        addComboElementAndSetIndex(this->comboParity, tr("None"), (int)QSerialPort::Parity::NoParity, lastParity);
+        addComboElementAndSetIndex(this->comboParity, tr("Odd"), (int)QSerialPort::Parity::OddParity, lastParity);
+        addComboElementAndSetIndex(this->comboParity, tr("Even"), (int)QSerialPort::Parity::EvenParity, lastParity);
+        addComboElementAndSetIndex(this->comboParity, tr("Mark"), (int)QSerialPort::Parity::MarkParity, lastParity);
+        addComboElementAndSetIndex(this->comboParity, tr("Space"), (int)QSerialPort::Parity::SpaceParity, lastParity);
     }
 
     //Stop bit combo
     {
-        this->comboStopBits->addItem("1", (int)QSerialPort::StopBits::OneStop);
-        if(lastStopBits == (int)QSerialPort::StopBits::OneStop) this->comboStopBits->setCurrentIndex(this->comboStopBits->count()-1);
-        this->comboStopBits->addItem("1.5", (int)QSerialPort::StopBits::OneAndHalfStop);
-        if(lastStopBits == (int)QSerialPort::StopBits::OneAndHalfStop) this->comboStopBits->setCurrentIndex(this->comboStopBits->count()-1);
-        this->comboStopBits->addItem("2", (int)QSerialPort::StopBits::TwoStop);
-        if(lastStopBits == (int)QSerialPort::StopBits::TwoStop) this->comboStopBits->setCurrentIndex(this->comboStopBits->count()-1);
+        addComboElementAndSetIndex(this->comboStopBits, "1", (int)QSerialPort::StopBits::OneStop, lastStopBits);
+        addComboElementAndSetIndex(this->comboStopBits, "1.5", (int)QSerialPort::StopBits::OneAndHalfStop, lastStopBits);
+        addComboElementAndSetIndex(this->comboStopBits, "2", (int)QSerialPort::StopBits::TwoStop, lastStopBits);
     }
 
     //Flow control
     {
-        this->comboFlowControl->addItem(tr("None"), (int)QSerialPort::FlowControl::NoFlowControl);
-        if(lastFlow == (int)QSerialPort::FlowControl::NoFlowControl) this->comboFlowControl->setCurrentIndex(this->comboFlowControl->count()-1);
-        this->comboFlowControl->addItem(tr("Hardware"), (int)QSerialPort::FlowControl::HardwareControl);
-        if(lastFlow == (int)QSerialPort::FlowControl::HardwareControl) this->comboFlowControl->setCurrentIndex(this->comboFlowControl->count()-1);
+        addComboElementAndSetIndex(this->comboFlowControl, tr("None"), (int)QSerialPort::FlowControl::NoFlowControl, lastFlow);
+        addComboElementAndSetIndex(this->comboFlowControl, tr("Hardware"), (int)QSerialPort::FlowControl::HardwareControl, lastFlow);
     }
 
     //Padding
