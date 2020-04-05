@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
                 QWidget * widgetFilePick = new QWidget(widgetTransfer);
                 {
                     QHBoxLayout * layoutFilePick = new QHBoxLayout(widgetFilePick);
-                    layoutFilePick->setMargin(0);
+                    layoutFilePick->setContentsMargins(0,0,0,0);
 
                     QLineEdit * editFilePath = new QLineEdit(widgetFilePick);
                     this->editFilePath = editFilePath;
@@ -81,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent)
                 QWidget * widgetButtons = new QWidget(widgetTransfer);
                 {
                     QHBoxLayout * layoutButtons = new QHBoxLayout(widgetButtons);
-                    layoutButtons->setMargin(0);
+                    layoutButtons->setContentsMargins(0,0,0,0);
                     layoutButtons->addStretch(1000);
 
                     QPushButton * pushCancel = new QPushButton(tr("Cancel"), widgetButtons);
